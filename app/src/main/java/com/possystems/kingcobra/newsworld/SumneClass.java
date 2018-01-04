@@ -24,5 +24,6 @@ public  class  SumneClass extends IntentService{
     protected void onHandleIntent(@Nullable Intent intent) {
         if(intent.getAction().equals("hellow")) Log.i(TAG, "Intent service called" + "\nfrom thread - > " +Thread.currentThread().getId());
 
+
     }
 }
