@@ -22,7 +22,13 @@ import java.util.ArrayList;
 
 
 public class CoverStoryFragment extends Fragment {
+    private static CoverStoryFragment instance;
 
+    public static CoverStoryFragment getInstance(){
+        if (instance==null)
+            instance = new CoverStoryFragment();
+        return instance;
+    }
     public CoverStoryFragment(){}
     String TAG = "CoverStoryFragment";
     CustomAdapter adapter;
@@ -37,10 +43,12 @@ public class CoverStoryFragment extends Fragment {
         context = getActivity();
         //Log.i(TAG, "COntext - >" + context.toString());
         try {
+
             d = new ArrayList<>();
             adapter = new CustomAdapter(d, context);
+            Log.i(TAG, "Fragment called"+ "\n adapter size - >" + adapter.getCount());
             list = (ListView) rootView.findViewById(R.id.list);
-            //list.setAdapter(adapter);
+            list.setAdapter(adapter);
 
 
 
@@ -72,7 +80,7 @@ public class CoverStoryFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             Log.i(TAG, "On Receive ");
 
-            adapterNotify((ArrayList<DataModel>) intent.getSerializableExtra("dataModel"), context);
+            //adapterNotify((ArrayList<DataModel>) intent.getSerializableExtra("dataModel"), context);
         }
     }
 }

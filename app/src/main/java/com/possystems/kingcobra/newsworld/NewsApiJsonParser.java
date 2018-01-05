@@ -1,7 +1,6 @@
 package com.possystems.kingcobra.newsworld;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Handler;
 import android.util.Log;
@@ -15,7 +14,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -210,6 +208,7 @@ public class NewsApiJsonParser {
         return temp;
 
     }
+    private TabsPagerAdapter mAdapter;
 
     public void updateUI(final Context context2, final ListView list) {
 
@@ -235,12 +234,19 @@ public class NewsApiJsonParser {
                         String TITLE = cr.getString(cr.getColumnIndex("TITLE"));
                         String DESCRIPTION = cr.getString(cr.getColumnIndex("DESCRIPTION"));
                         String URL = cr.getString(cr.getColumnIndex("URL"));
+                        String URLTOIMAGE = cr.getString(cr.getColumnIndex("URLTOIMAGE"));
                         String PUBLISHEDAT = cr.getString(cr.getColumnIndex("PUBLISHEDAT"));
-                        dataModel.add(new DataModel(ID, NAME, AUTHOR, TITLE, DESCRIPTION, URL, PUBLISHEDAT));
+                        dataModel.add(new DataModel(ID, NAME, AUTHOR, TITLE, DESCRIPTION, URL,URLTOIMAGE, PUBLISHEDAT));
                     } while (cr.moveToNext());
                     cr.close();
                 }
                 CustomAdapter adapter = new CustomAdapter(dataModel, context);
+                //adapter.notifyDataSetChanged();
+
+                CoverStoryFragment c = CoverStoryFragment.getInstance();
+                c.adapterNotify(dataModel, context);
+
+                Log.i(TAG, "Volley call finish" + "\nAdapter size - >" + adapter.getCount());
                 /*CoverStoryFragment c = new CoverStoryFragment();
                 c.adapterNotify( adapter);*/
 
@@ -264,8 +270,8 @@ public class NewsApiJsonParser {
 
     private void sendBroadCastCustom(ArrayList<DataModel> dataModel) {
 
-        Intent intent=new Intent(context,CoverStoryFragment.Receiver.class);
+       /* Intent intent=new Intent(context,CoverStoryFragment.Receiver.class);
         intent.putExtra("dataModel", (Serializable) dataModel);
-        context.sendBroadcast(intent);
+        context.sendBroadcast(intent);*/
     }
 }

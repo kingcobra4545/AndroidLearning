@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.possystems.kingcobra.newsworld.DataModel.DataModel;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -109,6 +110,7 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
             viewHolder.txtTitle = (TextView) convertView.findViewById(R.id.news_title);
             viewHolder.txtDesc = (TextView) convertView.findViewById(R.id.news_desc);
             viewHolder.txtAuthor = (TextView) convertView.findViewById(R.id.news_author);
+            viewHolder.info = (ImageView) convertView.findViewById(R.id.imageView);
 
             result=convertView;
 
@@ -128,6 +130,16 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
         viewHolder.txtAuthor.setTextColor(Color.BLACK);
         viewHolder.txtDesc.setText(dataModel.getDescription());
         viewHolder.txtDesc.setTextColor(Color.BLACK);
+        try {
+            Log.i(TAG, "for image url - >>" + dataModel.getImageURL());
+            Picasso.with(mContext).load(dataModel.getImageURL()).into(viewHolder.info);
+        }
+        catch (Exception e)
+        {
+            Log.i(TAG, "for image url - >>" + dataModel.getImageURL());
+
+            e.printStackTrace();
+        }
         Log.i(TAG, "get view finished");
         return convertView;
     }

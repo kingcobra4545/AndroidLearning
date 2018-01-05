@@ -18,7 +18,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
         switch (index) {
             case 0:
                 Log.i(TAG, "CoverStoryFragment called");
-                return new CoverStoryFragment();
+                return  CoverStoryFragment.getInstance();
             case 1:
                 Log.i(TAG, "TechnologyFragment called");
                 return new TechnologyFragment();

@@ -65,10 +65,28 @@ public class MainActivity extends AppCompatActivity implements  ActionBar.TabLis
         viewPager = (ViewPager) findViewById(R.id.pager);
         actionBar = getSupportActionBar();
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
+        mAdapter.getCount();
 
         viewPager.setAdapter(mAdapter);
         actionBar.setHomeButtonEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                actionBar.setSelectedNavigationItem(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         // Adding Tabs
         for (String tab_name : tabs) {
@@ -78,6 +96,11 @@ public class MainActivity extends AppCompatActivity implements  ActionBar.TabLis
                         public void onTabSelected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction ft) {
                             Log.i(TAG, "1.Tab selected - > " + tab.getText());
                             Log.i(TAG, "2.Tab selected - > " + tab.toString());
+                            viewPager.setCurrentItem(tab.getPosition());
+                            mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
+                            viewPager.setAdapter(mAdapter);
+                            Log.i(TAG, "count of items in adapter-> " +viewPager.getAdapter().getCount());
+                            //CoverStoryFragment fragment = (CoverStoryFragment) getFragmentManager().findFragmentById(R.id.news_container);
 
 
 
@@ -388,6 +411,7 @@ public boolean checkPermission(){
         super.onResume();
         Log.i(TAG,"on resume");
         adapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
     }
     @Override
     public void onPause(){

@@ -11,7 +11,7 @@ public class DataModel implements Serializable {
     String title;
     String description;
     String author;
-    String url;
+    String url, imageURL;
     String publishedAT;
 
 //dataModels.add(new DataModel("Apple Pie", "Android 1.0", "1","September 23, 2008"));
@@ -20,6 +20,15 @@ public class DataModel implements Serializable {
         this.title = title;
         this.description = description;
         this.url = url;
+        this.publishedAT = publishedAT;
+        this.author = author;
+
+    }
+    public  DataModel(String ID, String name, String author, String title, String description, String url, String imageURL, String publishedAT){
+        this.title = title;
+        this.description = description;
+        this.url = url;
+        this.imageURL = imageURL;
         this.publishedAT = publishedAT;
         this.author = author;
 
@@ -77,6 +86,10 @@ public class DataModel implements Serializable {
 
     public String getUrl() {
         return url;
+    }
+
+    public String getImageURL() {
+        return imageURL;
     }
     public String getPublishedAT() {
         return publishedAT;
