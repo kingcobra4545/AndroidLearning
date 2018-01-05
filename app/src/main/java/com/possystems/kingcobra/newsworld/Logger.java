@@ -12,6 +12,7 @@ public final class Logger {
     static final boolean debugVersionAPK = false;
     static final boolean stringStringParameters = false;
     static final boolean enableJSONLogging = false;
+    static final boolean enableDataAccessLayerLogger = false;
 
 
     static final boolean enableCriticalStringLog = false;
@@ -39,6 +40,8 @@ public final class Logger {
     }*/
     public static  void i (String tag, String log){
         if( debugVersionAPK )
+            Log.i(tag,log);
+        if(tag.equals("DataAccessLayer") && enableDataAccessLayerLogger)
             Log.i(tag,log);
 
     }

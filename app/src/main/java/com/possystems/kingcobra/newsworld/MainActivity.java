@@ -8,22 +8,20 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -34,8 +32,13 @@ import com.possystems.kingcobra.newsworld.database.GDatabaseHelper;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements  ActionBar.TabListener{
     NewsFragment newsFragment;
+    private ViewPager viewPager;
+    private TabsPagerAdapter mAdapter;
+    private ActionBar actionBar;
+    // Tab titles
+    private String[] tabs = { "Cover Story", "Technology", "Business" };
     private boolean sentToSettings = false;
     private SharedPreferences permissionStatus;
     private static final int EXTERNAL_STORAGE_PERMISSION_CONSTANT = 100;
@@ -52,11 +55,47 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = getApplicationContext();
-        list = (ListView) findViewById(R.id.list);
+        //list = (ListView) findViewById(R.id.list);
         permissionStatus = getSharedPreferences("permissionStatus",MODE_PRIVATE);
         d = new ArrayList<>();
         adapter = new CustomAdapter(d, context);
-        list.setAdapter(adapter);
+        //list.setAdapter(adapter);
+
+        // Initialization
+        viewPager = (ViewPager) findViewById(R.id.pager);
+        actionBar = getSupportActionBar();
+        mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
+
+        viewPager.setAdapter(mAdapter);
+        actionBar.setHomeButtonEnabled(false);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        // Adding Tabs
+        for (String tab_name : tabs) {
+            actionBar.addTab(actionBar.newTab().setText(tab_name)
+                    .setTabListener(new ActionBar.TabListener() {
+                        @Override
+                        public void onTabSelected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction ft) {
+                            Log.i(TAG, "1.Tab selected - > " + tab.getText());
+                            Log.i(TAG, "2.Tab selected - > " + tab.toString());
+
+
+
+                        }
+
+                        @Override
+                        public void onTabUnselected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction ft) {
+
+                        }
+
+                        @Override
+                        public void onTabReselected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction ft) {
+
+                        }
+                    }));
+        }
+
+
         sleepTask = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -83,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
             CustomVolley customVolley = new CustomVolley(context);
             customVolley.makeRequest(NewsApiConstants.NEWS_API, list);
         }
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+     /*   list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 DataModel dataModel= (DataModel) list.getItemAtPosition(position);
@@ -94,8 +133,8 @@ public class MainActivity extends AppCompatActivity {
                 newsFragment = new NewsFragment();
                 newsFragment.setArguments(bundle);
                 Boolean flag = false;
-                /*NewsFragment fragment = (NewsFragment) getFragmentManager().
-                        findFragmentById(R.id.news_container);*/
+                *//*NewsFragment fragment = (NewsFragment) getFragmentManager().
+                        findFragmentById(R.id.news_container);*//*
 
                 NewsFragment myFragment = (NewsFragment)getFragmentManager().findFragmentByTag("NewsFrag");
                 if (myFragment != null && myFragment.isVisible()) {
@@ -108,10 +147,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 addOrReplaceFragment(flag, bundle);
             }
-        });
-        Log.i(TAG, "Mainactivity called" + "\nfrom thread - > " +Thread.currentThread().getId());
+        });*/
+        //Log.i(TAG, "Mainactivity called" + "\nfrom thread - > " +Thread.currentThread().getId());
 
-        sleepTask2 = new AsyncTask<Void, Void, Void>() {
+        /*sleepTask2 = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
@@ -146,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
             }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);*/
         /*new Thread(new Runnable() {
             @Override
             public void run() {
@@ -219,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public void updateUI(final Context context, final ListView list) {
+/*    public void updateUI(final Context context, final ListView list) {
 
 
         Handler mainHandler = new Handler(context.getMainLooper());
@@ -257,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
             // This is your code
         };
         mainHandler.post(myRunnable);
-    }
+    }*/
 public boolean checkPermission(){
 
     if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -377,4 +416,19 @@ public boolean checkPermission(){
         Log.i(TAG,"on Restart");
     }
 
+
+    @Override
+    public void onTabSelected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction ft) {
+
+    }
+
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction ft) {
+
+    }
+
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction ft) {
+
+    }
 }

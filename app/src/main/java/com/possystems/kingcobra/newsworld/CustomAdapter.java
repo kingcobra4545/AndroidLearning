@@ -48,7 +48,7 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
         super(context, R.layout.main_row_item, data);
         this.dataSet = data;
         this.mContext=context;
-        Log.i(TAG, "Adapter Called");
+        Log.i(TAG, "Adapter Called" + "\n Data Size - > " + data.size());
 
     }
 
@@ -72,7 +72,20 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
 
     private int lastPosition = -1;
 
+    public interface OnDataChangeListener{
+        public void onDataChanged(DataModel dataModel);
+    }
 
+    OnDataChangeListener mOnDataChangeListener;
+    public void setOnDataChangeListener(OnDataChangeListener onDataChangeListener){
+        mOnDataChangeListener = onDataChangeListener;
+    }
+    private void doButtonOneClickActions(DataModel dataModel) {
+
+        if(mOnDataChangeListener != null){
+            mOnDataChangeListener.onDataChanged(dataModel);
+        }
+    }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 

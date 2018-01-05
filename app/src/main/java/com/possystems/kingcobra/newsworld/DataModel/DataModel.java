@@ -1,10 +1,12 @@
 package com.possystems.kingcobra.newsworld.DataModel;
 
+import java.io.Serializable;
+
 /**
  * Created by KingCobra on 24/11/17.
  */
 
-public class DataModel {
+public class DataModel implements Serializable {
 
     String title;
     String description;

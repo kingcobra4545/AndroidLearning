@@ -1,6 +1,7 @@
 package com.possystems.kingcobra.newsworld;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Handler;
 import android.util.Log;
@@ -14,6 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -239,7 +241,18 @@ public class NewsApiJsonParser {
                     cr.close();
                 }
                 CustomAdapter adapter = new CustomAdapter(dataModel, context);
-                list.setAdapter(adapter);
+                /*CoverStoryFragment c = new CoverStoryFragment();
+                c.adapterNotify( adapter);*/
+
+                sendBroadCastCustom(dataModel);
+
+                /*adapter.setOnDataChangeListener(new CustomAdapter.OnDataChangeListener() {
+                    @Override
+                    public void onDataChanged(DataModel dataModel) {
+
+                    }
+                });*/
+                // list.setAdapter(adapter);
 
 
             }
@@ -247,5 +260,12 @@ public class NewsApiJsonParser {
             // This is your code
         };
         mainHandler.post(myRunnable);
+    }
+
+    private void sendBroadCastCustom(ArrayList<DataModel> dataModel) {
+
+        Intent intent=new Intent(context,CoverStoryFragment.Receiver.class);
+        intent.putExtra("dataModel", (Serializable) dataModel);
+        context.sendBroadcast(intent);
     }
 }

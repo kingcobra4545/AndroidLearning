@@ -23,6 +23,10 @@
         <activity
             android:name=".database.AndroidDatabaseManager"
             android:theme="@style/Theme.AppCompat.Light" />
+
+
+        <receiver android:name=".CoverStoryFragment$Receiver">
+        </receiver>
     </application>
 
 </manifest>
