@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.possystems.kingcobra.newsworld.DataModel.DataModel;
@@ -52,6 +53,7 @@ public class CoverStoryFragment extends Fragment {
 
 
 
+
         }
         catch (Exception e){
             e.printStackTrace();
@@ -60,11 +62,23 @@ public class CoverStoryFragment extends Fragment {
         return rootView;
     }
 
-    public void adapterNotify(ArrayList<DataModel> dataModel, Context context){
+    public void adapterNotify(final ArrayList<DataModel> dataModel, final Context context){
         //list.setAdapter(adapter);
         //this.adapter = adapter;
         CustomAdapter customAdapter = new CustomAdapter(dataModel, context);
         list.setAdapter(customAdapter);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.i(TAG, "1.Position from main--> "  + view.getTag() + "\n id - > " + id);
+                Log.i(TAG, "2.Position from main--> "  + position);
+                Log.i(TAG, "Title - > " + dataModel.get(position).getUrl());
+
+                NewsWebView newsWebView = new NewsWebView();
+                newsWebView.createWebViewForNewsItem(dataModel.get(position).getUrl(), context);
+
+            }
+        });
         //this.adapter.notifyDataSetChanged();
     }
     @Override

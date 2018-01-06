@@ -41,7 +41,7 @@ public class CustomVolley {
     }
 
 
-    public JSONObject makeRequest(String url, final ListView list){
+    public JSONObject makeRequest(String url, final ListView list, final String queries){
         Log.i(TAG, "Making a http req using volley");
         RequestQueue queue = Volley.newRequestQueue(context);
 
@@ -54,7 +54,8 @@ public class CustomVolley {
 
                         Log.i(TAG, "Got the JSON bud" + "\n - >" + response );
                         NewsApiJsonParser affiliateURLJsonParser = new NewsApiJsonParser(response);
-                         affiliateURLJsonParser.firstResponseParser(context, list);
+                         affiliateURLJsonParser.firstResponseParser(context, list, queries);
+                        //affiliateURLJsonParser.firstResponseGsonParser(context, list, queries);
 
 
 

@@ -34,6 +34,7 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
         TextView txtType;
         TextView txtVersion, vehicleUsed;
         ImageView info;
+        String url;
     }
 
     /*private static final CustomAdapter instance = new CustomAdapter();
@@ -52,7 +53,28 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
         Log.i(TAG, "Adapter Called" + "\n Data Size - > " + data.size());
 
     }
+    /*@Override
+    public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3)
+    {
 
+        int pos=(Integer) v.getTag();
+        Log.i(TAG, "pos -- " + pos);
+        Log.i(TAG, "position -- " + position);
+        // Get Person "behind" the clicked item
+        //Person p = (Person) myListView.getItemAtPosition(position);
+
+        // Log the fields to check if we got the info we want
+        //Log.i("SomeTag", "Persons name: " + p.name);
+        //Log.i("SomeTag", "Persons id : " + p.person_id);
+
+        // Do something with the data. For example, passing them to a new Activity
+
+        *//*Intent i = new Intent(MainActivity.this, NewActivity.class);
+        i.putExtra("person_id", p.person_id);
+        i.putExtra("person_name", p.name);
+
+        MainActivity.this.startActivity(i);*//*
+    }*/
     @Override
     public void onClick(View v) {
 
@@ -111,7 +133,7 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
             viewHolder.txtDesc = (TextView) convertView.findViewById(R.id.news_desc);
             viewHolder.txtAuthor = (TextView) convertView.findViewById(R.id.news_author);
             viewHolder.info = (ImageView) convertView.findViewById(R.id.imageView);
-
+            viewHolder.url = "";
             result=convertView;
 
             convertView.setTag(viewHolder);
@@ -130,6 +152,14 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
         viewHolder.txtAuthor.setTextColor(Color.BLACK);
         viewHolder.txtDesc.setText(dataModel.getDescription());
         viewHolder.txtDesc.setTextColor(Color.BLACK);
+        viewHolder.url = dataModel.getUrl();
+
+      /*  if(dataModel.getAuthor()==null)
+            viewHolder.txtAuthor.setVisibility(View.GONE);
+        if(dataModel.getTitle()==null)
+            viewHolder.txtTitle.setVisibility(View.GONE);
+        if(dataModel.getDescription()==null)
+            viewHolder.txtDesc.setVisibility(View.GONE);*/
         try {
             Log.i(TAG, "for image url - >>" + dataModel.getImageURL());
             Picasso.with(mContext).load(dataModel.getImageURL()).into(viewHolder.info);

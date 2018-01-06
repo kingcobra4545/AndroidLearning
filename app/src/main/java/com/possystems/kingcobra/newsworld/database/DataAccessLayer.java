@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.possystems.kingcobra.newsworld.Logger;
+import com.possystems.kingcobra.newsworld.NewsApiConstants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,14 +21,14 @@ public class DataAccessLayer {
     public DataAccessLayer(Context context){
         this.context = context;
     }
-    public void writeFirstJsonResponseDataToDB(JSONArray articlesArray) throws JSONException {
+    public void writeFirstJsonResponseDataToDB(JSONArray articlesArray, String queries) throws JSONException {
 
 
         Logger.i(TAG, " articles -> "  + articlesArray.get(0));
-            for(int u = 0 ;u<articlesArray.length();u++) {
+            /*for(int u = 0 ;u<articlesArray.length();u++) {
                 Logger.i(TAG, "articles array - > " + articlesArray);
 
-            }
+            }*/
                 /*articlesJsonArray = (JSONArray) responseJSONOBJECT[0].names().get(1);
                 individualSources = (JSONObject) articlesJsonArray.get(0);
                 Logger.i(TAG, "1 source - > " + individualSources);*/
@@ -52,11 +53,12 @@ public class DataAccessLayer {
             //( `ID`	INTEGER PRIMARY KEY AUTOINCREMENT, `DELTA_GET`	TEXT, `_GET`	TEXT, `POST`	TEXT,
             // `CATEGORY`	TEXT NOT NULL, `_DELETE`	TEXT, `RESOURCE_NAME`	TEXT, `PUT` TEXT, `TOP`	INTEGER)
 
-           for (int i = 0 ; i<articlesArray.length();i++) {
+           //for (int i = 0 ; i<articlesArray.length();i++) {
+            for (int i = 0; i< NewsApiConstants.NO_OF_ARTICLES_TO_FETCH; i++) {
                JSONObject newsItem = new JSONObject(articlesArray.get(i).toString());
                for (int u = 1; u<newsItem.names().length();u++) {
                    JSONObject j = newsItem.getJSONObject("source");
-                   Logger.i(TAG, "-- > " + newsItem.names().get(u) + " -- > " + newsItem.get((String) newsItem.names().get(u)));
+                   //Logger.i(TAG, "-- > " + newsItem.names().get(u) + " -- > " + newsItem.get((String) newsItem.names().get(u)));
                    String key =  newsItem.names().get(u).toString().toUpperCase();
                    String value = newsItem.get( newsItem.names().get(u).toString()).toString();
                    //deltaGet, get, post, category, delete, resourceName, put, top
@@ -64,17 +66,22 @@ public class DataAccessLayer {
                     //values.put("ID", i);
                     //values.put("JSON_VERSION", map.get(FlippyConstants.JSON_VERSION_STRING));
                    //values.put("ID", j.getString("ID"));
-                   Logger.i(TAG, "1...Putting value in values map - > " + key + "\n" + value);
+                   Logger.i(TAG, "1...Putting value in values map - > " + key + "=" + value);
                     values.put(key, value);
                    Logger.i(TAG, "1...Now data in  values map - > " + values.toString());
 
                     //db.insertWithOnConflict("NEWS_FIRST_RESPONSE", null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
                }
+               values.put("QUERIES", queries);
+               values.put("UPDATED_TIME", System.currentTimeMillis());
                Logger.i(TAG, "1..Inserting data - > " + values.toString());
-               db.insert("NEWS_FIRST_RESPONSE", null, values);
+               //db.insert("NEWS_FIRST_RESPONSE", null, values);
+                db.insertWithOnConflict("NEWS_FIRST_RESPONSE", null, values, SQLiteDatabase.CONFLICT_IGNORE);
                values.clear();
+
             }
+
 
             db.setTransactionSuccessful();
         }

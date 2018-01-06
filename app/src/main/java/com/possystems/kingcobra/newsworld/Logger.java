@@ -12,7 +12,7 @@ public final class Logger {
     static final boolean debugVersionAPK = false;
     static final boolean stringStringParameters = false;
     static final boolean enableJSONLogging = false;
-    static final boolean enableDataAccessLayerLogger = false;
+    static final boolean enableDataAccessLayerLogger = true;
 
 
     static final boolean enableCriticalStringLog = false;

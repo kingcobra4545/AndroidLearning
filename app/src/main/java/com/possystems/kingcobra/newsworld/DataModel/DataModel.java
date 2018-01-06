@@ -65,7 +65,12 @@ public class DataModel implements Serializable {
         this.getURL = getURL;
     }*/
 
-    public String getAuthor() {return this.author;}
+    public String getAuthor() {
+        if(this.author.equals("null"))
+            return "private";
+        else
+            return this.author;
+    }
     //public void setJsonVersion(String jsonVersion) {this.jsonVersion = jsonVersion;}
 
     /*public String getDistanceTravelled() {

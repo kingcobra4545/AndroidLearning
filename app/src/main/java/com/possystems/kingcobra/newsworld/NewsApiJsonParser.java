@@ -44,7 +44,7 @@ public class NewsApiJsonParser {
     public NewsApiJsonParser(String response) {
         this.response = response;
     }
-    public ArrayList<HashMap<String, String>>  firstResponseParser(final Context context, ListView list){
+    public ArrayList<HashMap<String, String>>  firstResponseParser(final Context context, ListView list, String queries){
         this.context = context;
         ArrayList<HashMap<String, String>> listOfItemsInACategory = new ArrayList<>();
         HashMap<String, String> map = new HashMap<>();
@@ -61,54 +61,18 @@ public class NewsApiJsonParser {
                 Log.i(TAG, "Status:OK");
                 articlesArray= new JSONArray( map.get("articles"));
                 Log.i(TAG, " articles -> "  + articlesArray.get(0));
-                for(int u = 0 ;u<articlesArray.length();u++) {
+               /* for(int u = 0 ;u<articlesArray.length();u++) {
                     source = new JSONObject(articlesArray.get(u).toString());
 
                     Log.i(TAG, " source -> " + source);
                     Log.i(TAG, " source -> " + source.names());
-                    for (int o = 0; o < source.length(); o++)
-                        Log.i(TAG, " source items -> " + source.get(source.names().get(o).toString()) + "\n\n\n.");
+                    *//*for (int o = 0; o < source.length(); o++)
+                        Log.i(TAG, " source items -> " + source.get(source.names().get(o).toString()) + "\n\n\n.");*//*
 
-                    DataAccessLayer DAL = new DataAccessLayer(context);
-                    DAL.writeFirstJsonResponseDataToDB(articlesArray);
-                  /*  Thread thread = new Thread() {
-                        @Override
-                        public void run() {
-                            try {
-                                Log.i(TAG, "Sleeping");
-                                sleep(500);
-                                Log.i(TAG, "Woke up");
-                                DataAccessLayer DAL = new DataAccessLayer(context);
-                                //DAL.writeFirstJsonResponseDataToDB(articlesArray);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    };
-
-                    thread.start();*/
-
-/*
-                    Thread thread2 = new Thread() {
-                        @Override
-                        public void run() {
-                            try {
-                                Log.i(TAG, "Sleeping before UI update");
-                                sleep(5000);
-
-                                Log.i(TAG, "Woke up after ui sleep");
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    };
-
-                    thread2.start();*/
-                    /*MainActivity main = new MainActivity();
-                    main.updateUI(context, list);*/
-                    updateUI(context, list);
-
-                }
+                }*/
+                DataAccessLayer DAL = new DataAccessLayer(context);
+                DAL.writeFirstJsonResponseDataToDB(articlesArray, queries);
+                updateUI(context, list, queries);
                 /*articlesJsonArray = (JSONArray) responseJSONOBJECT[0].names().get(1);
                 individualSources = (JSONObject) articlesJsonArray.get(0);
                 Log.i(TAG, "1 source - > " + individualSources);*/
@@ -210,7 +174,7 @@ public class NewsApiJsonParser {
     }
     private TabsPagerAdapter mAdapter;
 
-    public void updateUI(final Context context2, final ListView list) {
+    public void updateUI(final Context context2, final ListView list, final String queries) {
 
 
         Handler mainHandler = new Handler(context.getMainLooper());
@@ -220,6 +184,10 @@ public class NewsApiJsonParser {
             public void run() {
                 ArrayList<DataModel> dataModel = new ArrayList<>();
                 String queryToSelectTimeLineItems = context.getResources().getString(R.string.sql_query_select_get_items);
+                queryToSelectTimeLineItems = String.format(queryToSelectTimeLineItems, queries);
+                queryToSelectTimeLineItems = queryToSelectTimeLineItems + "LIMIT " + String.valueOf(NewsApiConstants.NO_OF_ARTICLES_TO_FETCH);
+                Log.i(TAG, "Query to fetch news from local db - >" + queryToSelectTimeLineItems);
+
                 GDatabaseHelper gHelper = GDatabaseHelper.getInstance(context);
                 ArrayList<Cursor> cursorList1 = gHelper.getData(queryToSelectTimeLineItems);
                 Cursor cr = cursorList1.get(0);
@@ -274,4 +242,13 @@ public class NewsApiJsonParser {
         intent.putExtra("dataModel", (Serializable) dataModel);
         context.sendBroadcast(intent);*/
     }
+
+    /*public void firstResponseGsonParser(Context context, ListView list, String queries) {
+
+        Gson gson = new Gson();
+        List<>
+        gson.fromJson(response, type);
+
+
+    }*/
 }

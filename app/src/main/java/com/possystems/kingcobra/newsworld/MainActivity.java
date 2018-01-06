@@ -33,12 +33,13 @@ import com.possystems.kingcobra.newsworld.database.GDatabaseHelper;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements  ActionBar.TabListener{
+    String queries="";
     NewsFragment newsFragment;
     private ViewPager viewPager;
     private TabsPagerAdapter mAdapter;
     private ActionBar actionBar;
     // Tab titles
-    private String[] tabs = { "Cover Story", "Technology", "Business" };
+    private String[] tabs = { NewsApiConstants.COVER_STORY, NewsApiConstants.TECHNOLOGY, NewsApiConstants.BUSINESS };
     private boolean sentToSettings = false;
     private SharedPreferences permissionStatus;
     private static final int EXTERNAL_STORAGE_PERMISSION_CONSTANT = 100;
@@ -59,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements  ActionBar.TabLis
         permissionStatus = getSharedPreferences("permissionStatus",MODE_PRIVATE);
         d = new ArrayList<>();
         adapter = new CustomAdapter(d, context);
+        //list = (ListView) findViewById(R.id.list);
+
         //list.setAdapter(adapter);
 
         // Initialization
@@ -94,15 +97,15 @@ public class MainActivity extends AppCompatActivity implements  ActionBar.TabLis
                     .setTabListener(new ActionBar.TabListener() {
                         @Override
                         public void onTabSelected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction ft) {
+                            QueryBuilder queryBuilder = new QueryBuilder();
+                            queries = queryBuilder.getQueriesForTabSelected(tab.getText().toString());
                             Log.i(TAG, "1.Tab selected - > " + tab.getText());
                             Log.i(TAG, "2.Tab selected - > " + tab.toString());
                             viewPager.setCurrentItem(tab.getPosition());
                             mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
                             viewPager.setAdapter(mAdapter);
                             Log.i(TAG, "count of items in adapter-> " +viewPager.getAdapter().getCount());
-                            //CoverStoryFragment fragment = (CoverStoryFragment) getFragmentManager().findFragmentById(R.id.news_container);
-
-
+                            makeVolleyRequest(queries);
 
                         }
 
@@ -117,8 +120,6 @@ public class MainActivity extends AppCompatActivity implements  ActionBar.TabLis
                         }
                     }));
         }
-
-
         sleepTask = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -137,95 +138,11 @@ public class MainActivity extends AppCompatActivity implements  ActionBar.TabLis
                 super.onPostExecute(aVoid);
             }
         }.execute();
-        String newAPI = NewsApiConstants.NEWS_API;
-        if(checkPermission())
-        if(!haveNetworkConnection())
-            Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show();
-        else {
-            CustomVolley customVolley = new CustomVolley(context);
-            customVolley.makeRequest(NewsApiConstants.NEWS_API, list);
-        }
-     /*   list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                DataModel dataModel= (DataModel) list.getItemAtPosition(position);
-                //DataModel dataModel = new DataModel();
-                Toast.makeText(context, "--> " + dataModel.getAuthor(), Toast.LENGTH_SHORT).show();
-                Bundle bundle = new Bundle();
-                bundle.putString("desc", dataModel.getDescription());
-                newsFragment = new NewsFragment();
-                newsFragment.setArguments(bundle);
-                Boolean flag = false;
-                *//*NewsFragment fragment = (NewsFragment) getFragmentManager().
-                        findFragmentById(R.id.news_container);*//*
+    }
 
-                NewsFragment myFragment = (NewsFragment)getFragmentManager().findFragmentByTag("NewsFrag");
-                if (myFragment != null && myFragment.isVisible()) {
-                    Log.i(TAG, "fragment  in activity");
-                    flag = true;
-                }
-                else {
-                    Log.i(TAG, "fragment not in activity");
-                    flag = false;
-                }
-                addOrReplaceFragment(flag, bundle);
-            }
-        });*/
-        //Log.i(TAG, "Mainactivity called" + "\nfrom thread - > " +Thread.currentThread().getId());
-
-        /*sleepTask2 = new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                try {
-                    Log.i(TAG, "Async 10000 started");
-                    Thread.sleep(10000);
-                    Log.i(TAG, "Async 10000 stopped");
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-            }
-        }.execute();
-        sleepTask3 = new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                try {
-                    Log.i(TAG, "Async  20000 started");
-                    Thread.sleep(20000);
-                    Log.i(TAG, "Async 20000 stopped");
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);*/
-        /*new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Log.i(TAG, "thread started");
-                Log.i(TAG, "Thread called" + "\nfrom thread - > " +Thread.currentThread().getId());
-
-
-            }
-
-        }).start();
-        Intent is = new Intent("hellow");
-        is.setAction("hellow");
-        this.startService(is);*/
-
-        //createTimeLineFromDB();
-
-
+    private void makeVolleyRequest(String queries) {
+        CustomVolley customVolley = new CustomVolley(context);
+        customVolley.makeRequest(NewsApiConstants.NEWS_API_DEFAULT_END_POINT + queries + NewsApiConstants.NEWS_API_KEY, list, queries);
     }
 
     private void addOrReplaceFragment(Boolean addOrReplace, Bundle desc) {
@@ -375,6 +292,7 @@ public boolean checkPermission(){
         SharedPreferences.Editor editor = permissionStatus.edit();
         editor.putBoolean(Manifest.permission.WRITE_EXTERNAL_STORAGE,true);
         editor.commit();
+        proceedAfterPermission();
 
 
     } else {
@@ -387,6 +305,7 @@ public boolean checkPermission(){
 
     private void proceedAfterPermission() {
         //We've got the permission, now we can proceed further
+        makeVolleyRequest(queries);
         Toast.makeText(getBaseContext(), "We got the Storage Permission", Toast.LENGTH_LONG).show();
     }
 
