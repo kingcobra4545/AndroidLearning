@@ -14,13 +14,13 @@ class QueryBuilder {
         String query="";
         switch(tabName){
             case NewsApiConstants.COVER_STORY:
-                query = "language=en&country=in&";
+                query = NewsApiConstants.COVER_STORY_QUERY;
                 break;
             case NewsApiConstants.TECHNOLOGY:
-                query = "category=technology&";
+                query = NewsApiConstants.TECHNOLOGY_QUERY;
                 break;
             case NewsApiConstants.BUSINESS:
-                query = "category=business&";
+                query = NewsApiConstants.BUSINESS_QUERY;
                 break;
 
         }

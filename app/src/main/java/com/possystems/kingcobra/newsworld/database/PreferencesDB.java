@@ -3,8 +3,6 @@ package com.possystems.kingcobra.newsworld.database;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.possystems.kingcobra.newsworld.Logger;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -227,11 +225,7 @@ public class PreferencesDB  {
         return getString(context, TripistaUserID);
     }
 
-    public static boolean savePrefAccountName(Context context, String strPrefAccountName)
-    {
-        Logger.i(context, "Account Name being set by Mr. " + context.getClass().getSimpleName() +" and it is " + strPrefAccountName);
-        return saveString(context, PrefAccountName, strPrefAccountName);
-    }
+
 
     public static String getPrefAccountName(Context context)
     {

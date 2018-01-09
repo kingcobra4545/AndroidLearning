@@ -2,7 +2,6 @@ package com.possystems.kingcobra.newsworld;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +49,7 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
         super(context, R.layout.main_row_item, data);
         this.dataSet = data;
         this.mContext=context;
-        Log.i(TAG, "Adapter Called" + "\n Data Size - > " + data.size());
+        Logger.i(TAG, "Adapter Called" + "\n Data Size - > " + data.size());
 
     }
     /*@Override
@@ -58,14 +57,14 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
     {
 
         int pos=(Integer) v.getTag();
-        Log.i(TAG, "pos -- " + pos);
-        Log.i(TAG, "position -- " + position);
+        Logger.i(TAG, "pos -- " + pos);
+        Logger.i(TAG, "position -- " + position);
         // Get Person "behind" the clicked item
         //Person p = (Person) myListView.getItemAtPosition(position);
 
-        // Log the fields to check if we got the info we want
-        //Log.i("SomeTag", "Persons name: " + p.name);
-        //Log.i("SomeTag", "Persons id : " + p.person_id);
+        // Logger the fields to check if we got the info we want
+        //Logger.i("SomeTag", "Persons name: " + p.name);
+        //Logger.i("SomeTag", "Persons id : " + p.person_id);
 
         // Do something with the data. For example, passing them to a new Activity
 
@@ -79,7 +78,7 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
     public void onClick(View v) {
 
         int position=(Integer) v.getTag();
-        Log.i(TAG, "pos -- " + position);
+        Logger.i(TAG, "pos -- " + position);
         Object object= getItem(position);
         DataModel dataModel=(DataModel)object;
 
@@ -87,7 +86,7 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
         {
             case R.layout.main_row_item:
                 //((MainActivity) mContext).openCameraForActivityResultAnotherMethod2((Integer) v.getTag());
-                Log.i(TAG, "tag--" + v.getTag());
+                Logger.i(TAG, "tag--" + v.getTag());
 
                 break;
         }
@@ -117,9 +116,9 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
 
         // Get the data item for this position
         DataModel dataModel = getItem(position);
-        Log.i(TAG, "get view called" + "\nfrom thread - > " +Thread.currentThread().getId() +
-                "\n For position" + position +  " category -- > " + dataModel.getTitle());
         // Check if an existing view is being reused, otherwise inflate the view
+        Logger.i(TAG, "get view called" + "\nfrom thread - > " +Thread.currentThread().getId() +
+                "\n For position" + position +  " category -- > " + dataModel.getTitle());
         ViewHolder viewHolder; // view lookup cache stored in tag
 
         final View result;
@@ -146,7 +145,7 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
         result.startAnimation(animation);
         lastPosition = position;
 
-            //Log.i(TAG, "\nsetting as follows - >  " + dataModel.getTitle() + "\n" + dataModel.getDescription());
+            //Logger.i(TAG, "\nsetting as follows - >  " + dataModel.getTitle() + "\n" + dataModel.getDescription());
         viewHolder.txtTitle.setText(dataModel.getTitle());
         viewHolder.txtAuthor.setText("- " + dataModel.getAuthor());
         viewHolder.txtAuthor.setTextColor(Color.BLACK);
@@ -161,16 +160,16 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
         if(dataModel.getDescription()==null)
             viewHolder.txtDesc.setVisibility(View.GONE);*/
         try {
-            Log.i(TAG, "for image url - >>" + dataModel.getImageURL());
+            Logger.i(TAG, "for image url - >>" + dataModel.getImageURL());
             Picasso.with(mContext).load(dataModel.getImageURL()).into(viewHolder.info);
         }
         catch (Exception e)
         {
-            Log.i(TAG, "for image url - >>" + dataModel.getImageURL());
+            Logger.i(TAG, "for image url - >>" + dataModel.getImageURL());
 
             e.printStackTrace();
         }
-        Log.i(TAG, "get view finished");
+        Logger.i(TAG, "get view finished");
         return convertView;
     }
 
@@ -178,10 +177,10 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
         new Thread( new Runnable() {
             @Override
             public void run() {
-                Log.i(TAG, "Compression being");
+                Logger.i(TAG, "Compression being");
                 final int THUMBSIZE = 64;
                 Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(photoLocation), THUMBSIZE, THUMBSIZE);
-                Log.i(TAG, "Compression end");
+                Logger.i(TAG, "Compression end");
                 imageLoader.DisplayImage();
                 thumbNailImageView.setImageBitmap(ThumbImage);
             }

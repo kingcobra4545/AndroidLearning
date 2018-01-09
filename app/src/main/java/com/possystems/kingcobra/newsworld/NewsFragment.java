@@ -18,11 +18,12 @@ public class NewsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_news,
+        /*View view = inflater.inflate(R.layout.fragment_news,
                 container, false);
-        textView = (TextView) view.findViewById(R.id.detailsText);
+        textView = (TextView) view.findViewById(R.id.detailsText);*/
         //setText("jinggi chaka");
-        return view;
+        //return view;
+        return null;
     }
 
     public void setText(String text) {

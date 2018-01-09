@@ -30,6 +30,8 @@ import com.possystems.kingcobra.newsworld.HTTP_Requests.CustomVolley;
 import com.possystems.kingcobra.newsworld.database.AndroidDatabaseManager;
 import com.possystems.kingcobra.newsworld.database.GDatabaseHelper;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements  ActionBar.TabListener{
@@ -85,17 +87,20 @@ public class MainActivity extends AppCompatActivity implements  ActionBar.TabLis
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                Log.i(TAG, "onPageScrolled position - > " + position);
 
             }
 
             @Override
             public void onPageSelected(int position) {
+                Log.i(TAG, "onPageSelected position - > " + position);
                 actionBar.setSelectedNavigationItem(position);
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
 
+                Log.i(TAG, "onPageScrollStateChanged state - > " + state);
             }
         });
 
@@ -111,8 +116,10 @@ public class MainActivity extends AppCompatActivity implements  ActionBar.TabLis
                             Log.i(TAG, "2.Tab selected - > " + tab.toString());
                             viewPager.setCurrentItem(tab.getPosition());
                             mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
-                            viewPager.setAdapter(mAdapter);
-                            Log.i(TAG, "count of items in adapter-> " +viewPager.getAdapter().getCount());
+                            Log.i(TAG, "am an instance of - > " + mAdapter.getClass().getSimpleName());
+                            //viewPager.setAdapter(mAdapter);
+                            //mAdapter.notifyDataSetChanged();
+                            //Log.i(TAG, "count of items in adapter-> " +viewPager.getAdapter().getCount());
                             makeVolleyRequest(queries);
 
                         }
@@ -149,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements  ActionBar.TabLis
     }
 
     private void makeVolleyRequest(String queries) {
+        JSONObject receivedObject = new JSONObject();
         CustomVolley customVolley = new CustomVolley(context);
         customVolley.makeRequest(NewsApiConstants.NEWS_API_DEFAULT_END_POINT + queries + NewsApiConstants.NEWS_API_KEY, list, queries);
     }
@@ -159,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements  ActionBar.TabLis
         if(!addOrReplace) {// add
             Log.i(TAG, "Adding fragment");
             newsFragment.setArguments(desc);
-            ft.add(R.id.news_container, newsFragment, "NewsFrag");
+            //ft.add(R.id.news_container, newsFragment, "NewsFrag");
             ft.commit();
         }
 
@@ -168,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements  ActionBar.TabLis
             //FragmentTransaction ft = fm.beginTransaction();
                 Log.i(TAG, "Replacing fragment");
                 newsFragment.setArguments(desc);
-                ft.replace(R.id.news_container, newsFragment, "NewsFrag");
+                //ft.replace(R.id.news_container, newsFragment, "NewsFrag");
                 ft.commit();
     }
     }

@@ -18,6 +18,11 @@ public class NewsApiConstants {
     final static String SPORTS = "SPORTS";
 
 
+    final static String COVER_STORY_QUERY = "language=en&country=in&";
+    final static String TECHNOLOGY_QUERY = "category=technology&";
+    final static String BUSINESS_QUERY = "category=business&";
+
+
 
 
 

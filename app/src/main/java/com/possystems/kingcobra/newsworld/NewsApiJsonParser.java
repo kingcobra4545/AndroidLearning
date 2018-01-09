@@ -3,7 +3,6 @@ package com.possystems.kingcobra.newsworld;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.ListView;
 
 import com.possystems.kingcobra.newsworld.DataModel.DataModel;
@@ -40,11 +39,15 @@ public class NewsApiJsonParser {
 
 
     String response;
+    JSONObject jsonObject;
 
     public NewsApiJsonParser(String response) {
         this.response = response;
     }
-    public ArrayList<HashMap<String, String>>  firstResponseParser(final Context context, ListView list, String queries){
+    public NewsApiJsonParser(JSONObject jsonObject) {
+        this.response = jsonObject.toString();
+    }
+    public void  firstResponseParser(final Context context, ListView list, String queries){
         this.context = context;
         ArrayList<HashMap<String, String>> listOfItemsInACategory = new ArrayList<>();
         HashMap<String, String> map = new HashMap<>();
@@ -53,29 +56,21 @@ public class NewsApiJsonParser {
 
         try {
             responseJSONOBJECT[0] = new JSONObject(response);
-            Log.i(TAG, "Names -- > " + responseJSONOBJECT[0].names());
+            Logger.i(TAG, "Names -- > " + responseJSONOBJECT[0].names());
             String status = (String) responseJSONOBJECT[0].names().get(0);
             map = getItemsInsideResponseJsonObject(responseJSONOBJECT);
-            Log.i(TAG,"Status - > " + status);
+            Logger.i(TAG,"Status - > " + status);
             if(map.get("status").equals("ok")){
-                Log.i(TAG, "Status:OK");
+                Logger.i(TAG, "Status:OK");
                 articlesArray= new JSONArray( map.get("articles"));
-                Log.i(TAG, " articles -> "  + articlesArray.get(0));
-               /* for(int u = 0 ;u<articlesArray.length();u++) {
-                    source = new JSONObject(articlesArray.get(u).toString());
+                Logger.i(TAG, " articles -> "  + articlesArray.get(0));
 
-                    Log.i(TAG, " source -> " + source);
-                    Log.i(TAG, " source -> " + source.names());
-                    *//*for (int o = 0; o < source.length(); o++)
-                        Log.i(TAG, " source items -> " + source.get(source.names().get(o).toString()) + "\n\n\n.");*//*
-
-                }*/
+                //Write into local db
                 DataAccessLayer DAL = new DataAccessLayer(context);
                 DAL.writeFirstJsonResponseDataToDB(articlesArray, queries);
+
+                //Update UI with obtained data
                 updateUI(context, list, queries);
-                /*articlesJsonArray = (JSONArray) responseJSONOBJECT[0].names().get(1);
-                individualSources = (JSONObject) articlesJsonArray.get(0);
-                Log.i(TAG, "1 source - > " + individualSources);*/
 
             }
 
@@ -84,7 +79,7 @@ public class NewsApiJsonParser {
 
 /*
             for (String j :tagsToGetFromJsonObj)
-                Log.i(TAG, j+" - > " + responseJSONOBJECT[0].getString(j));
+                Logger.i(TAG, j+" - > " + responseJSONOBJECT[0].getString(j));
             apiGroupsJSONOBJECT[0] = responseJSONOBJECT[0].getJSONObject(objectsToGetFromapiGroupsJsonObj[0]);
             affiliateJSONOBJECT[0] = apiGroupsJSONOBJECT[0].getJSONObject(objectsToGetFromAffiliateJsonObj[0]);
             JSONObject object;
@@ -93,9 +88,9 @@ public class NewsApiJsonParser {
             for(int i=0;i<5;i++) {
                 String categories = object.names().get(i).toString();
                 ArrayList<JSONObject> availableVariantsObject = getAvailableVariants(object.getJSONObject(categories));
-                Log.i(TAG, "For category - > " + categories);
+                Logger.i(TAG, "For category - > " + categories);
                 //itemsSingle = getItemsInsideAvailableVariants(availableVariantsObject, categories);
-                Log.i(TAG, ".\n\n\n\n\n.");
+                Logger.i(TAG, ".\n\n\n\n\n.");
                 //listOfItemsInACategory.add(itemsSingle);
                 itemsSingle = new HashMap<>();
             }*/
@@ -104,7 +99,7 @@ public class NewsApiJsonParser {
         catch (Exception e ){
             e.printStackTrace();
         }
-        return listOfItemsInACategory;
+        //return listOfItemsInACategory;
     }
 
     private HashMap<String, String> getItemsInsideResponseJsonObject(JSONObject[] responseJSONOBJECT) throws JSONException {
@@ -128,25 +123,25 @@ public class NewsApiJsonParser {
         ArrayList<JSONObject> temp = new ArrayList<>();
         ArrayList<HashMap<String, String>> items = new ArrayList<>();
         for (JSONObject p :availableVariantsObjects) {
-            //Log.i(TAG, "p--> " + p);
+            //Logger.i(TAG, "p--> " + p);
             for (int iii = 0; iii < p.length(); iii++) {
                 String names = p.names().get(iii).toString();
                 if (names != null)
                     if (names.equals(FlippyConstants.getJsonForVersion)){
-                        //Log.i(TAG, "\n\n" + names);
+                        //Logger.i(TAG, "\n\n" + names);
                 if (p.get(names) instanceof JSONObject) {
-                    //Log.i(TAG, "into temp - >  "+ p.getJSONObject(names) + " \nfor name - > " + names);
+                    //Logger.i(TAG, "into temp - >  "+ p.getJSONObject(names) + " \nfor name - > " + names);
                     temp.add(p.getJSONObject(names));
                 }
                 else if (p.get(names) instanceof String)
-                    Log.i(TAG, "tags + " + p.getString(names));
+                    Logger.i(TAG, "tags + " + p.getString(names));
             }
             }
             for (JSONObject j : temp) {
 
                 for(int y=0;y<j.length();y++) {
                     String nameInside = j.names().get(y).toString();
-                    //Log.i(TAG, "Being put -- >" +nameInside + " - > " + j.getString(nameInside) + "\n");
+                    //Logger.i(TAG, "Being put -- >" +nameInside + " - > " + j.getString(nameInside) + "\n");
 
                     map.put(nameInside, j.getString(nameInside));
                     map.put("Json_Version", FlippyConstants.getJsonForVersion);
@@ -166,9 +161,9 @@ public class NewsApiJsonParser {
             String names = string.names().get(p).toString();
             if(string.get(names) instanceof JSONObject)
                 temp.add(string.getJSONObject(names));
-            //Log.i(TAG, "name " + names + "json object" +string.getJSONObject(names));
+            //Logger.i(TAG, "name " + names + "json object" +string.getJSONObject(names));
         }
-        Log.i(TAG, "temp size - > " + temp.size());
+        Logger.i(TAG, "temp size - > " + temp.size());
         return temp;
 
     }
@@ -186,7 +181,7 @@ public class NewsApiJsonParser {
                 String queryToSelectTimeLineItems = context.getResources().getString(R.string.sql_query_select_get_items);
                 queryToSelectTimeLineItems = String.format(queryToSelectTimeLineItems, queries);
                 queryToSelectTimeLineItems = queryToSelectTimeLineItems + "LIMIT " + String.valueOf(NewsApiConstants.NO_OF_ARTICLES_TO_FETCH);
-                Log.i(TAG, "Query to fetch news from local db - >" + queryToSelectTimeLineItems);
+                Logger.i(TAG, "Query to fetch news from local db - >" + queryToSelectTimeLineItems);
 
                 GDatabaseHelper gHelper = GDatabaseHelper.getInstance(context);
                 ArrayList<Cursor> cursorList1 = gHelper.getData(queryToSelectTimeLineItems);
@@ -208,17 +203,26 @@ public class NewsApiJsonParser {
                     } while (cr.moveToNext());
                     cr.close();
                 }
-                CustomAdapter adapter = new CustomAdapter(dataModel, context);
+                //CustomAdapter adapter = new CustomAdapter(dataModel, context);
                 //adapter.notifyDataSetChanged();
 
                 CoverStoryFragment c = CoverStoryFragment.getInstance();
-                c.adapterNotify(dataModel, context);
+                BusinessFragment b = BusinessFragment.getInstance();
+                TechnologyFragment t = TechnologyFragment.getInstance();
+                if(NewsApiConstants.COVER_STORY_QUERY.equals(queries))
+                    c.adapterNotify(dataModel, context);
+                else
+                    if (NewsApiConstants.TECHNOLOGY_QUERY.equals(queries))
+                        t.adapterNotify(dataModel, context);
+                else
+                    if(NewsApiConstants.BUSINESS_QUERY.equals(queries))
+                        b.adapterNotify(dataModel, context);
 
-                Log.i(TAG, "Volley call finish" + "\nAdapter size - >" + adapter.getCount());
+                //Logger.i(TAG, "Volley call finish" + "\nAdapter size - >" + adapter.getCount());
                 /*CoverStoryFragment c = new CoverStoryFragment();
                 c.adapterNotify( adapter);*/
 
-                sendBroadCastCustom(dataModel);
+                //sendBroadCastCustom(dataModel);
 
                 /*adapter.setOnDataChangeListener(new CustomAdapter.OnDataChangeListener() {
                     @Override

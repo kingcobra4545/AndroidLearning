@@ -778,7 +778,7 @@ public class GDatabaseHelper extends SQLiteOpenHelper {
     public void executeSQLWithParams(String query,Object[] objects){
         try{
             SQLiteDatabase db=getWritableDatabase();
-            Logger.d3(TAG,query + Arrays.toString(objects));
+            Logger.i(TAG,query + Arrays.toString(objects));
             db.execSQL(query,objects);
         }
         catch (SQLException e){

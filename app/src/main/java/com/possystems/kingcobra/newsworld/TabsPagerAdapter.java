@@ -17,14 +17,14 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
 
         switch (index) {
             case 0:
-                Log.i(TAG, "CoverStoryFragment called");
+                Log.d(TAG, "CoverStoryFragment called");
                 return  CoverStoryFragment.getInstance();
             case 1:
-                Log.i(TAG, "TechnologyFragment called");
-                return new TechnologyFragment();
+                Log.d(TAG, "TechnologyFragment called");
+                return  TechnologyFragment.getInstance();
             case 2:
-                Log.i(TAG, "BusinessFragment called");
-                return new BusinessFragment();
+                Log.d(TAG, "BusinessFragment called");
+                return  BusinessFragment.getInstance();
         }
 
         return null;

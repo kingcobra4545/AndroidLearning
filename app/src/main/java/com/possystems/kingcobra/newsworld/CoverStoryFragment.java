@@ -48,7 +48,7 @@ public class CoverStoryFragment extends Fragment {
             d = new ArrayList<>();
             adapter = new CustomAdapter(d, context);
             Log.i(TAG, "Fragment called"+ "\n adapter size - >" + adapter.getCount());
-            list = (ListView) rootView.findViewById(R.id.list);
+            list = (ListView) rootView.findViewById(R.id.list_cover);
             list.setAdapter(adapter);
 
 
