@@ -24,7 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
-
+import com.onesignal.OneSignal;
 import com.possystems.kingcobra.newsworld.DataModel.DataModel;
 import com.possystems.kingcobra.newsworld.HTTP_Requests.CustomVolley;
 import com.possystems.kingcobra.newsworld.database.AndroidDatabaseManager;
@@ -56,6 +56,14 @@ public class MainActivity extends AppCompatActivity implements  ActionBar.TabLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = getApplicationContext();
+//OneSignal Init Start
+        OneSignal.startInit(this)
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
+//OneSignal Init Finish
+
+
         //list = (ListView) findViewById(R.id.list);
         permissionStatus = getSharedPreferences("permissionStatus",MODE_PRIVATE);
         d = new ArrayList<>();

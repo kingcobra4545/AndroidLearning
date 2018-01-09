@@ -1,10 +1,23 @@
+plugins {
+    id 'com.onesignal.androidsdk.onesignal-gradle-plugin' version '0.8.0'
+}
+apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
+
+
+repositories {
+    maven { url 'https://maven.google.com' }
+}
 apply plugin: 'com.android.application'
+
 
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
     defaultConfig {
         applicationId "com.possystems.kingcobra.newsworld"
+        manifestPlaceholders = [onesignal_app_id: "d7ad9bdf-225c-4652-ae46-509b4ec78d86",
+                                // Project number pulled from dashboard, local value is ignored.
+                                onesignal_google_project_number: "REMOTE"]
         minSdkVersion 22
         targetSdkVersion 25
         versionCode 1
@@ -29,5 +42,7 @@ dependencies {
     compile 'com.android.volley:volley:1.0.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.google.code.gson:gson:2.7'
+    compile 'com.onesignal:OneSignal:[3.6.5, 3.99.99]'
     testCompile 'junit:junit:4.12'
+
 }
