@@ -67,7 +67,7 @@ public class DataModel implements Serializable {
 
     public String getAuthor() {
         if(this.author.equals("null"))
-            return "private";
+            return "Pvt";
         else
             return this.author;
     }

@@ -64,6 +64,8 @@ public class CustomVolley {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.i(TAG, "No JSON for you");
+                NewsApiJsonParser affiliateURLJsonParser = new NewsApiJsonParser();
+                affiliateURLJsonParser.noResponseHandler(context, list, queries);
             }
         }){
          /*   @Override

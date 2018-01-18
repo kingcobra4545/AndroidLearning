@@ -2,7 +2,6 @@ package com.possystems.kingcobra.newsworld;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.widget.PopupMenu;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -13,6 +12,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.possystems.kingcobra.newsworld.DataModel.DataModel;
@@ -29,7 +29,7 @@ import static com.possystems.kingcobra.newsworld.R.id.options_button_on_image;
  * Created by KingCobra on 24/11/17.
  */
 
-public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnClickListener{
+public class CustomAdapter_2 extends ArrayAdapter<DataModel> implements View.OnClickListener{
     String TAG = "CustomAdapter";
 
     private ArrayList<DataModel> dataSet;
@@ -39,8 +39,6 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
     // View lookup cache
     private static class ViewHolder {
         TextView txtTitle, txtDesc, txtAuthor, txtSourceAndTime;
-        TextView txtType;
-        TextView txtVersion, vehicleUsed;
         ImageView info;
         String url;
         Button optionButton;
@@ -54,9 +52,9 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
         return instance;
     }*/
 
-    public CustomAdapter(ArrayList<DataModel> data, Context context) {
+    public CustomAdapter_2(ArrayList<DataModel> data, Context context) {
 
-        super(context, R.layout.main_row_item, data);
+        super(context, R.layout.card_view, data);
         this.dataSet = data;
         this.mContext=context;
         Logger.i(TAG, "Adapter Called" + "\n Data Size - > " + data.size());
@@ -94,7 +92,7 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
 
         switch (v.getId())
         {
-            case R.layout.main_row_item:
+            case R.layout.card_view:
                 //((MainActivity) mContext).openCameraForActivityResultAnotherMethod2((Integer) v.getTag());
                 Logger.i(TAG, "tag--" + v.getTag());
 
@@ -137,10 +135,10 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
 
             viewHolder = new ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
-            convertView = inflater.inflate(R.layout.main_row_item, parent, false);
-            viewHolder.txtTitle = (TextView) convertView.findViewById(R.id.news_title);
-            viewHolder.txtDesc = (TextView) convertView.findViewById(R.id.news_desc);
-            viewHolder.txtAuthor = (TextView) convertView.findViewById(R.id.news_author);
+            convertView = inflater.inflate(R.layout.card_view, parent, false);
+            viewHolder.txtTitle = (TextView) convertView.findViewById(R.id.titleTxt);
+            viewHolder.txtDesc = (TextView) convertView.findViewById(R.id.descriptionTxt);
+            //viewHolder.txtAuthor = (TextView) convertView.findViewById(R.id.news_author);
             viewHolder.txtSourceAndTime= (TextView) convertView.findViewById(R.id.news_source_and_time);
             viewHolder.info = (ImageView) convertView.findViewById(imageView);
             viewHolder.optionButton = (Button) convertView.findViewById(options_button_on_image);
@@ -160,8 +158,10 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
             //Logger.i(TAG, "\nsetting as follows - >  " + dataModel.getTitle() + "\n" + dataModel.getDescription());
         viewHolder.txtTitle.setText(dataModel.getTitle());
         //viewHolder.txtAuthor.setText("- " + dataModel.getAuthor());
-        viewHolder.txtSourceAndTime.setText(dataModel.getAuthor() + " • " + getTimeDifference(dataModel.getPublishedAT()));
-        viewHolder.txtAuthor.setTextColor(Color.BLACK);
+        String authorAndTime = dataModel.getAuthor() + " • " + getTimeDifference(dataModel.getPublishedAT());
+        Log.i(TAG, "Author and time - > " + authorAndTime);
+        viewHolder.txtSourceAndTime.setText(authorAndTime);
+        //viewHolder.txtAuthor.setTextColor(Color.BLACK);
         viewHolder.txtDesc.setText(dataModel.getDescription());
         viewHolder.txtDesc.setTextColor(Color.BLACK);
         viewHolder.url = dataModel.getUrl();
@@ -173,11 +173,7 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
                     public void run() {
                         showPopupMenu(v);
                     }
-                });
-
-
-
-            }
+                });}
 
             private void showPopupMenu(View v) {
 
@@ -194,61 +190,10 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
             }
         });
 
-        /*MenuPopupHelper menuHelper = new MenuPopupHelper(getContext(), (MenuBuilder) menu.getMenu(), viewHolder.info);
-        menuHelper.setForceShowIcon(true);
-        menuHelper.show();*/
-
-      /*  if(dataModel.getAuthor()==null)
-            viewHolder.txtAuthor.setVisibility(View.GONE);
-        if(dataModel.getTitle()==null)
-            viewHolder.txtTitle.setVisibility(View.GONE);
-        if(dataModel.getDescription()==null)
-            viewHolder.txtDesc.setVisibility(View.GONE);*/
         try {
             Logger.i(TAG, "for image url - >>" + dataModel.getImageURL());
             Picasso.with(mContext).load(dataModel.getImageURL()).into(viewHolder.info);
-           /* PopupMenu menu = new PopupMenu(getContext(), viewHolder.info);
-            menu.inflate(R.menu.option_menu_each_item_in_list);
-            menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    Log.i(TAG, "item clicked - >   " + item.getTitle());
-                    return false;
-                }
-            });*/
 
-            /*Picasso.with(mContext).load(dataModel.getImageURL()).into(new Target() {
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    assert viewHolder.info != null;
-                    viewHolder.info.setImageBitmap(bitmap);
-                    Palette.from(bitmap)
-                            .generate(new Palette.PaletteAsyncListener() {
-                                @Override
-                                public void onGenerated(Palette palette) {
-                                    Palette.Swatch textSwatch = palette.getVibrantSwatch();
-                                    if (textSwatch == null) {
-                                        //Toast.makeText(mContext, "Null swatch :(", Toast.LENGTH_SHORT).show();
-                                        return;
-                                    }
-                                    //viewHolder.txtTitle.setTextColor(textSwatch.getBodyTextColor());
-                                    //viewHolder.txtTitle.setTextColor(palette.getLightMutedColor(Color.BLACK));
-                                    viewHolder.txtTitle.setTextColor(Color.WHITE);
-
-                                }
-                            });
-                }
-
-                @Override
-                public void onBitmapFailed(Drawable errorDrawable) {
-
-                }
-
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                }
-            });*/
 
 
         }
@@ -292,19 +237,4 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
         return "";
     }
 
-    /*private void getThumbNailFromPhotoLocation(final String photoLocation, final ImageView thumbNailImageView) {
-        new Thread( new Runnable() {
-            @Override
-            public void run() {
-                Logger.i(TAG, "Compression being");
-                final int THUMBSIZE = 64;
-                Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(photoLocation), THUMBSIZE, THUMBSIZE);
-                Logger.i(TAG, "Compression end");
-                imageLoader.DisplayImage();
-                thumbNailImageView.setImageBitmap(ThumbImage);
-            }
-        }).start();
-
-
-    }*/
 }

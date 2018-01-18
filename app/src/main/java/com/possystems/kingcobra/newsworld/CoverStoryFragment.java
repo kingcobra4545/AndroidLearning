@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.possystems.kingcobra.newsworld.DataModel.DataModel;
 
@@ -36,6 +37,7 @@ public class CoverStoryFragment extends Fragment {
     ArrayList<DataModel> d;
     ListView list;
     Context context;
+    private ProgressBar spinner;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -46,12 +48,14 @@ public class CoverStoryFragment extends Fragment {
         try {
 
             d = new ArrayList<>();
+//            if(adapter==null)
             adapter = new CustomAdapter(d, context);
             Log.i(TAG, "Fragment called"+ "\n adapter size - >" + adapter.getCount());
             list = (ListView) rootView.findViewById(R.id.list_cover);
-            list.setAdapter(adapter);
-
-
+//            list.setAdapter(adapter);
+            spinner = (ProgressBar)rootView.findViewById(R.id.progressBar1);
+            //spinner.setVisibility(View.GONE);
+            spinner.setVisibility(View.VISIBLE);
 
 
         }
@@ -66,7 +70,19 @@ public class CoverStoryFragment extends Fragment {
         //list.setAdapter(adapter);
         //this.adapter = adapter;
         CustomAdapter customAdapter = new CustomAdapter(dataModel, context);
-        list.setAdapter(customAdapter);
+        spinner.setVisibility(View.GONE);
+        if(list.getAdapter()!=null) {
+            Log.i(TAG, "adapter count " + list.getAdapter().getCount());
+            if (list.getAdapter().getCount() < 1) {
+                //Log.i(TAG, "adapter count " + list.getAdapter().getCount());
+                list.setAdapter(customAdapter);
+            }
+        }
+            else
+            list.setAdapter(customAdapter);
+
+
+
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

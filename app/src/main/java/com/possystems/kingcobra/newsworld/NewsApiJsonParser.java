@@ -40,7 +40,9 @@ public class NewsApiJsonParser {
 
     String response;
     JSONObject jsonObject;
+    public NewsApiJsonParser() {
 
+    }
     public NewsApiJsonParser(String response) {
         this.response = response;
     }
@@ -154,7 +156,7 @@ public class NewsApiJsonParser {
         return map;
     }*/
 
-    private ArrayList<JSONObject> getAvailableVariants(JSONObject string) throws JSONException {
+   /* private ArrayList<JSONObject> getAvailableVariants(JSONObject string) throws JSONException {
         ArrayList<JSONObject> temp = new ArrayList<>();
 
         for(int p =0 ; p<string.length();p++) {
@@ -166,24 +168,24 @@ public class NewsApiJsonParser {
         Logger.i(TAG, "temp size - > " + temp.size());
         return temp;
 
-    }
+    }*/
     private TabsPagerAdapter mAdapter;
 
     public void updateUI(final Context context2, final ListView list, final String queries) {
 
 
-        Handler mainHandler = new Handler(context.getMainLooper());
+        Handler mainHandler = new Handler(context2.getMainLooper());
 
         Runnable myRunnable = new Runnable() {
             @Override
             public void run() {
                 ArrayList<DataModel> dataModel = new ArrayList<>();
-                String queryToSelectTimeLineItems = context.getResources().getString(R.string.sql_query_select_get_items);
+                String queryToSelectTimeLineItems = context2.getResources().getString(R.string.sql_query_select_get_items);
                 queryToSelectTimeLineItems = String.format(queryToSelectTimeLineItems, queries);
                 queryToSelectTimeLineItems = queryToSelectTimeLineItems + "LIMIT " + String.valueOf(NewsApiConstants.NO_OF_ARTICLES_TO_FETCH);
                 Logger.i(TAG, "Query to fetch news from local db - >" + queryToSelectTimeLineItems);
 
-                GDatabaseHelper gHelper = GDatabaseHelper.getInstance(context);
+                GDatabaseHelper gHelper = GDatabaseHelper.getInstance(context2);
                 ArrayList<Cursor> cursorList1 = gHelper.getData(queryToSelectTimeLineItems);
                 Cursor cr = cursorList1.get(0);
                 if (cr != null && cr.moveToFirst()) {
@@ -210,13 +212,13 @@ public class NewsApiJsonParser {
                 BusinessFragment b = BusinessFragment.getInstance();
                 TechnologyFragment t = TechnologyFragment.getInstance();
                 if(NewsApiConstants.COVER_STORY_QUERY.equals(queries))
-                    c.adapterNotify(dataModel, context);
+                    c.adapterNotify(dataModel, context2);
                 else
                     if (NewsApiConstants.TECHNOLOGY_QUERY.equals(queries))
-                        t.adapterNotify(dataModel, context);
+                        t.adapterNotify(dataModel, context2);
                 else
                     if(NewsApiConstants.BUSINESS_QUERY.equals(queries))
-                        b.adapterNotify(dataModel, context);
+                        b.adapterNotify(dataModel, context2);
 
                 //Logger.i(TAG, "Volley call finish" + "\nAdapter size - >" + adapter.getCount());
                 /*CoverStoryFragment c = new CoverStoryFragment();
@@ -245,6 +247,11 @@ public class NewsApiJsonParser {
        /* Intent intent=new Intent(context,CoverStoryFragment.Receiver.class);
         intent.putExtra("dataModel", (Serializable) dataModel);
         context.sendBroadcast(intent);*/
+    }
+
+    public void noResponseHandler(Context context, ListView list, String queries) {
+        updateUI(context, list, queries);
+
     }
 
     /*public void firstResponseGsonParser(Context context, ListView list, String queries) {

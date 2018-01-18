@@ -24,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
+
 import com.onesignal.OneSignal;
 import com.possystems.kingcobra.newsworld.DataModel.DataModel;
 import com.possystems.kingcobra.newsworld.HTTP_Requests.CustomVolley;
@@ -33,6 +34,7 @@ import com.possystems.kingcobra.newsworld.database.GDatabaseHelper;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements  ActionBar.TabListener{
     String queries="";
@@ -52,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements  ActionBar.TabLis
     private AsyncTask<Void, Void, Void> sleepTask, initDatabase, sleepTask2, sleepTask3;
     String TAG = "MainActivity";
     ListView list;
+    List<String > viewedTabs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +67,8 @@ public class MainActivity extends AppCompatActivity implements  ActionBar.TabLis
                 .unsubscribeWhenNotificationsAreDisabled(true)
                 .init();
 //OneSignal Init Finish
-
+        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);*/
 
         //list = (ListView) findViewById(R.id.list);
         permissionStatus = getSharedPreferences("permissionStatus",MODE_PRIVATE);
@@ -83,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements  ActionBar.TabLis
         viewPager.setAdapter(mAdapter);
         actionBar.setHomeButtonEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        viewedTabs = new ArrayList();
 
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -105,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements  ActionBar.TabLis
         });
 
         // Adding Tabs
-        for (String tab_name : tabs) {
+        for (final String tab_name : tabs) {
             actionBar.addTab(actionBar.newTab().setText(tab_name)
                     .setTabListener(new ActionBar.TabListener() {
                         @Override
@@ -115,12 +120,20 @@ public class MainActivity extends AppCompatActivity implements  ActionBar.TabLis
                             Log.i(TAG, "1.Tab selected - > " + tab.getText());
                             Log.i(TAG, "2.Tab selected - > " + tab.toString());
                             viewPager.setCurrentItem(tab.getPosition());
-                            mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
+                            android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+                            mAdapter = new TabsPagerAdapter(fm);
                             Log.i(TAG, "am an instance of - > " + mAdapter.getClass().getSimpleName());
-                            //viewPager.setAdapter(mAdapter);
-                            //mAdapter.notifyDataSetChanged();
-                            //Log.i(TAG, "count of items in adapter-> " +viewPager.getAdapter().getCount());
-                            makeVolleyRequest(queries);
+                            Log.i(TAG, "Current Tab " + tab.getText());
+                            Log.i(TAG, "1. Viewed Tabs " + viewedTabs.toString() );
+                            if(!viewedTabs.contains(tab.getText())) {
+                                Log.i(TAG, tab.getText() + " hasn't been viewed so fetching for it now");
+;                                makeVolleyRequest(queries);
+                                viewedTabs.add(tab.getText().toString());
+                            }
+
+                            Log.i(TAG, "2. Viewed Tabs " + viewedTabs.toString() );
+
+
 
                         }
 

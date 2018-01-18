@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.possystems.kingcobra.newsworld.DataModel.DataModel;
 
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 
 
 public class TechnologyFragment extends Fragment {
+    private ProgressBar spinner;
     private static TechnologyFragment instance;
 
     public static TechnologyFragment getInstance(){
@@ -43,13 +45,16 @@ public class TechnologyFragment extends Fragment {
         try {
 
             d = new ArrayList<>();
-            adapter = new CustomAdapter(d, context);
+//            if(adapter==null)
+                adapter = new CustomAdapter(d, context);
             Log.i(TAG, "Fragment called"+ "\n adapter size - >" + adapter.getCount());
             list = (ListView) rootView.findViewById(R.id.list_tech);
-            list.setAdapter(adapter);
+//            list.setAdapter(adapter);
 
 
-
+            spinner = (ProgressBar)rootView.findViewById(R.id.progressBar1);
+            //spinner.setVisibility(View.GONE);
+            spinner.setVisibility(View.VISIBLE);
 
         }
         catch (Exception e){
@@ -59,7 +64,17 @@ public class TechnologyFragment extends Fragment {
     }
     public void adapterNotify(final ArrayList<DataModel> dataModel, final Context context) {
         CustomAdapter customAdapter = new CustomAdapter(dataModel, context);
-        list.setAdapter(customAdapter);
+        if(list.getAdapter()!=null) {
+            Log.i(TAG, "adapter count " + list.getAdapter().getCount());
+            if (list.getAdapter().getCount() < 1) {
+                //Log.i(TAG, "adapter count " + list.getAdapter().getCount());
+                list.setAdapter(customAdapter);
+            }
+        }
+        else {
+            list.setAdapter(customAdapter);
+        }
+        spinner.setVisibility(View.GONE);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

@@ -25,26 +25,7 @@ public class DataAccessLayer {
 
 
         Logger.i(TAG, " articles -> "  + articlesArray.get(0));
-            /*for(int u = 0 ;u<articlesArray.length();u++) {
-                Logger.i(TAG, "articles array - > " + articlesArray);
 
-            }*/
-                /*articlesJsonArray = (JSONArray) responseJSONOBJECT[0].names().get(1);
-                individualSources = (JSONObject) articlesJsonArray.get(0);
-                Logger.i(TAG, "1 source - > " + individualSources);*/
-
-
-
-
-
-
-        /*for (HashMap<String , String> map:
-                mainList) {
-
-            Logger.i(TAG, "key -- > " + map.keySet());
-        }*/
-
-        //String querySelectFromFirstResponseTable = context.getResources().getString(R.string.sql_query_select_from_first_response_table);
        GDatabaseHelper gHelper = GDatabaseHelper.getInstance(context);
         SQLiteDatabase db = gHelper.getWritableDatabase();
         db.beginTransaction();

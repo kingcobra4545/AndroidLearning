@@ -10,7 +10,10 @@ public final class Logger {
 
     static final boolean enableDataAccessLayerLogger = false;
     static final boolean enableCustomAdapterLogger = false;
-    static final boolean enableNewsApiJsonParserLogger = false;
+    static final boolean enableNewsApiJsonParserLogger = true;
+    static final boolean enableVerticlePagerAdapterLogger = true;
+    static final boolean enableBusinessFragmentLogger = true;
+
 
     public static  void i (String tag, String log){
         if(tag.equals("DataAccessLayer") && enableDataAccessLayerLogger)
@@ -19,6 +22,11 @@ public final class Logger {
             Log.i(tag,log);
         if(tag.equals("NewsApiJsonParser") && enableNewsApiJsonParserLogger)
             Log.i(tag,log);
+        if(tag.equals("VerticlePagerAdapter") && enableVerticlePagerAdapterLogger)
+            Log.i(tag,log);
+        if(tag.equals("BusinessFragment") && enableBusinessFragmentLogger)
+            Log.i(tag,log);
+
 
     }
 
