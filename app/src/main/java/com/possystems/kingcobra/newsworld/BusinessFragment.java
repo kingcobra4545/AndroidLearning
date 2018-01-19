@@ -3,6 +3,9 @@ package com.possystems.kingcobra.newsworld;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +24,8 @@ import java.util.ArrayList;
 
 
 public class BusinessFragment extends Fragment {
+
+    int previousPosition = -1 ;
     private static BusinessFragment instance;
     VerticalViewPager verticalViewPager;
     private ProgressBar spinner;
@@ -36,10 +41,10 @@ public class BusinessFragment extends Fragment {
     private SwipePlaceHolderView mSwipeView;
     Context context;
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.main_layout_1, container, false);
+        final View rootView = inflater.inflate(R.layout.main_layout_1, container, false);
         context = getActivity();
         //Log.i(TAG, "COntext - >" + context.toString());
         try {
@@ -61,6 +66,55 @@ public class BusinessFragment extends Fragment {
 
 
             verticalViewPager = (VerticalViewPager) rootView.findViewById(R.id.verticleViewPager);
+
+            verticalViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    AppCompatActivity actionBarActivity = (AppCompatActivity) getActivity();
+                    ActionBar actionBar = actionBarActivity.getSupportActionBar();
+                    if(position<previousPosition)
+                        actionBar.show();
+                    else
+                        actionBar.hide();
+                    Logger.i(TAG, "Previous Item --> "  + previousPosition + "\nCurrent Item - > " + position  );
+                    previousPosition = position;
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+
+                }
+            });
+
+            verticalViewPager.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+                @Override
+                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                            //Logger.i(TAG, "onScroll Change");
+                    /*Logger.i(TAG, "  Parent view Tag 0 -> " + container.getChildAt(0));
+                    Logger.i(TAG, "  Parent view Tag 1 -> " + container.getChildAt(1).toString() );*/
+                    try {
+                        //getActivity().getActionBar().hide();
+                        /*AppCompatActivity actionBarActivity = (AppCompatActivity)getActivity();
+                        ActionBar actionBar = actionBarActivity.getSupportActionBar();
+                        actionBar.hide();
+                        verticalViewPager.getCurrentItem();
+                        Logger.i(TAG, "Current Item --> "  + verticalViewPager.getCurrentItem());*/
+
+                    }
+                    catch (Exception e )
+                    {
+                        e.printStackTrace();
+                    }
+
+                }
+
+
+            });
 
 
 

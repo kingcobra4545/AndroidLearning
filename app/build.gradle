@@ -18,7 +18,7 @@ android {
         manifestPlaceholders = [onesignal_app_id: "d7ad9bdf-225c-4652-ae46-509b4ec78d86",
                                 // Project number pulled from dashboard, local value is ignored.
                                 onesignal_google_project_number: "REMOTE"]
-        minSdkVersion 22
+        minSdkVersion 23
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -48,7 +48,7 @@ dependencies {
     compile 'com.android.support:cardview-v7:25.3.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.google.code.gson:gson:2.7'
-    compile 'com.github.castorflex.verticalviewpager:library:19.0.1'
+    compile 'com.android.support:design:25.3.1'
     testCompile 'junit:junit:4.12'
 
 }

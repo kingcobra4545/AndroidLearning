@@ -21,10 +21,10 @@ import com.possystems.kingcobra.newsworld.DataModel.DataModel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static com.android.volley.VolleyLog.TAG;
-
 @Layout(R.layout.card_view)
 public class TinderCard {
+
+    String TAG = "TinderCard";
 
     @View(R.id.imageView)
     private ImageView profileImageView;
@@ -55,6 +55,7 @@ public class TinderCard {
         descriptionTxt.setText(mDataModel.getDescription());
         String authorAndTime = mDataModel.getAuthor() + " • " + getTimeDifference(mDataModel.getPublishedAT());
         newSourceAndTime.setText(authorAndTime);
+        Logger.i(TAG, "on Resolved");
 
 
 

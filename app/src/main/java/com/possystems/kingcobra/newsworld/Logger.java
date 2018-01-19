@@ -13,6 +13,8 @@ public final class Logger {
     static final boolean enableNewsApiJsonParserLogger = true;
     static final boolean enableVerticlePagerAdapterLogger = true;
     static final boolean enableBusinessFragmentLogger = true;
+    static final boolean enableTinderCardLogger = true;
+
 
 
     public static  void i (String tag, String log){
@@ -26,6 +28,9 @@ public final class Logger {
             Log.i(tag,log);
         if(tag.equals("BusinessFragment") && enableBusinessFragmentLogger)
             Log.i(tag,log);
+        if(tag.equals("TinderCard") && enableTinderCardLogger)
+            Log.i(tag,log);
+
 
 
     }

@@ -22,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -77,6 +78,27 @@ public class MainActivity extends AppCompatActivity implements  ActionBar.TabLis
         //list = (ListView) findViewById(R.id.list);
 
         //list.setAdapter(adapter);
+
+        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        // Toolbar :: Transparent
+        toolbar.setBackgroundColor(Color.TRANSPARENT);
+
+        setSupportActionBar(toolbar);*/
+        getSupportActionBar().setTitle("NewsWorld");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Status bar :: Transparent
+        Window window = this.getWindow();
+
+       /* if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        {
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(Color.TRANSPARENT);
+        }*/
+
+
 
         // Initialization
         viewPager = (ViewPager) findViewById(R.id.pager);
