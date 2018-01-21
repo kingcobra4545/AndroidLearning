@@ -10,10 +10,14 @@ public final class Logger {
 
     static final boolean enableDataAccessLayerLogger = false;
     static final boolean enableCustomAdapterLogger = false;
-    static final boolean enableNewsApiJsonParserLogger = true;
-    static final boolean enableVerticlePagerAdapterLogger = true;
+    static final boolean enableNewsApiJsonParserLogger = false;
+    static final boolean enableVerticlePagerAdapterLogger = false;
     static final boolean enableBusinessFragmentLogger = true;
-    static final boolean enableTinderCardLogger = true;
+    static final boolean enableTinderCardLogger = false;
+    static final boolean enableMainActivityLogger = true;
+
+
+
 
 
 
@@ -30,6 +34,10 @@ public final class Logger {
             Log.i(tag,log);
         if(tag.equals("TinderCard") && enableTinderCardLogger)
             Log.i(tag,log);
+        if(tag.equals("MainActivity") && enableMainActivityLogger)
+            Log.i(tag,log);
+
+
 
 
 

@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.possystems.kingcobra.newsworld.Logger;
 import com.possystems.kingcobra.newsworld.NewsApiConstants;
+import com.possystems.kingcobra.newsworld.POJO.News;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -85,6 +86,59 @@ public class DataAccessLayer {
         }*/
 
     }
+
+    public Boolean writeFirstGsonResponseDataToDB(News news, String queries) throws Exception {
+        Boolean success = false;
+        GDatabaseHelper gHelper = GDatabaseHelper.getInstance(context);
+        SQLiteDatabase db = gHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            //( `ID`	INTEGER PRIMARY KEY AUTOINCREMENT, `DELTA_GET`	TEXT, `_GET`	TEXT, `POST`	TEXT,
+            // `CATEGORY`	TEXT NOT NULL, `_DELETE`	TEXT, `RESOURCE_NAME`	TEXT, `PUT` TEXT, `TOP`	INTEGER)
+
+            //for (int i = 0 ; i<articlesArray.length();i++) {
+            //for (int i = 0; i< NewsApiConstants.NO_OF_ARTICLES_TO_FETCH; i++) {
+                //JSONObject newsItem = new JSONObject(articlesArray.get(i).toString());
+                for (int u = 0; u<NewsApiConstants.NO_OF_ARTICLES_TO_FETCH;u++) {
+                    values.put("AUTHOR", news.articles.get(u).getAuthor());
+                    values.put("TITLE", news.articles.get(u).getTitle());
+                    values.put("DESCRIPTION", news.articles.get(u).getDescription());
+                    values.put("URL", news.articles.get(u).getUrl());
+                    values.put("URLTOIMAGE", news.articles.get(u).getUrlToImage());
+                    values.put("PUBLISHEDAT", news.articles.get(u).getPublishedAt());
+
+                    values.put("QUERIES", queries);
+                    values.put("UPDATED_TIME", System.currentTimeMillis());
+                    Logger.i(TAG, "1..Inserting data - > " + values.toString());
+                    db.insertWithOnConflict("NEWS_FIRST_RESPONSE", null, values, SQLiteDatabase.CONFLICT_IGNORE);
+                    values.clear();
+                }
+            //}
+            success = true;
+            db.setTransactionSuccessful();
+        }
+
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        finally {
+            db.endTransaction();
+            return success;
+        }
+
+       /* ArrayList<Cursor> cursorList1 = gHelper.getData(querySelectFromFirstResponseTable);
+        Cursor cr = cursorList1.get(0);
+        if(cr != null && cr.moveToFirst()) {
+            do {
+                String category =
+
+            }while (cr.moveToNext());
+        }*/
+
+    }
+
+
     /*public String getURLForSecondJsonResponseForACategory(String category){
         String URL=null;
 

@@ -3,6 +3,7 @@ package com.possystems.kingcobra.newsworld;
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -11,7 +12,7 @@ import android.view.View;
  */
 
 public class VerticalViewPager extends ViewPager {
-
+    private OnClickListener mOnClickListener;
     public VerticalViewPager(Context context) {
         super(context);
         init();
@@ -23,12 +24,41 @@ public class VerticalViewPager extends ViewPager {
     }
 
     private void init() {
+        setup();
         // The majority of the magic happens here
         setPageTransformer(true, new VerticalPageTransformer());
         // The easiest way to get rid of the overscroll drawing that happens on the left and right
         setOverScrollMode(OVER_SCROLL_NEVER);
     }
+    public void setOnViewPagerClickListener(OnClickListener onClickListener) {
+        mOnClickListener = onClickListener;
+    }
+    public interface OnClickListener {
+        void onViewPagerClick(ViewPager viewPager);
+    }
+    private class TapGestureListener extends GestureDetector.SimpleOnGestureListener {
 
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            if(mOnClickListener != null) {
+                mOnClickListener.onViewPagerClick(VerticalViewPager.this);
+            }
+
+            return true;
+        }
+    }
+    private void setup() {
+        final GestureDetector tapGestureDetector = new GestureDetector(getContext(), new TapGestureListener());
+
+        setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                tapGestureDetector.onTouchEvent(event);
+
+                return false;
+            }
+        });
+    }
     private class VerticalPageTransformer implements ViewPager.PageTransformer {
         private static final float MIN_SCALE = 0.75f;
         @Override

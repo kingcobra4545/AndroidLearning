@@ -1,6 +1,7 @@
 package com.possystems.kingcobra.newsworld;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -24,8 +25,11 @@ import java.util.ArrayList;
 
 
 public class BusinessFragment extends Fragment {
-
+    boolean statusOfActionBar = true;
     int previousPosition = -1 ;
+    int previousPositionConcrete = -1 ;
+    int set = -1;
+    int position = -1;
     private static BusinessFragment instance;
     VerticalViewPager verticalViewPager;
     private ProgressBar spinner;
@@ -46,27 +50,47 @@ public class BusinessFragment extends Fragment {
 
         final View rootView = inflater.inflate(R.layout.main_layout_1, container, false);
         context = getActivity();
+
+        new actionBarTimer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         //Log.i(TAG, "COntext - >" + context.toString());
         try {
 
             d = new ArrayList<>();
-            /*
-//            if(adapter.getCount()<=0)
-            adapter = new CustomAdapter_2(d, context);
-            Log.i(TAG, "Fragment called"+ "\n adapter size - >" + adapter.getCount());
-            //list = (ListView) rootView.findViewById(R.id.list_busi);
-            mSwipeView = (SwipePlaceHolderView)rootView.findViewById(R.id.swipeView);
-            //list.setAdapter(adapter);
-
-
-            spinner = (ProgressBar)rootView.findViewById(R.id.progressBar1);
-            //spinner.setVisibility(View.GONE);
-            spinner.setVisibility(View.VISIBLE);*/
-
-
-
             verticalViewPager = (VerticalViewPager) rootView.findViewById(R.id.verticleViewPager);
+            verticalViewPager.setOnViewPagerClickListener(new VerticalViewPager.OnClickListener() {
+                @Override
+                public void onViewPagerClick(ViewPager viewPager) {
+                    AppCompatActivity actionBarActivity = (AppCompatActivity) getActivity();
+                    ActionBar actionBar = actionBarActivity.getSupportActionBar();
+                    if(statusOfActionBar){
+                        Logger.i(TAG, "Hiding the actions bar on Click");
+                        statusOfActionBar = false;
+                        actionBar.hide();
+                    }
+                    else {
+                        Logger.i(TAG, "Showing the actions bar on Click");
+                        statusOfActionBar = true;
+                        actionBar.show();
+                    }
+                }
 
+                /*@Override
+                public void onClick(View v) {
+                    AppCompatActivity actionBarActivity = (AppCompatActivity) getActivity();
+                    ActionBar actionBar = actionBarActivity.getSupportActionBar();
+                    if(statusOfActionBar){
+                        Logger.i(TAG, "Hiding the actions bar on Click");
+                    statusOfActionBar = false;
+                    actionBar.hide();
+                    }
+                    else {
+                        Logger.i(TAG, "Showing the actions bar on Click");
+                        statusOfActionBar = true;
+                        actionBar.show();
+                    }
+
+                }*/
+            });
             verticalViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -77,12 +101,17 @@ public class BusinessFragment extends Fragment {
                 public void onPageSelected(int position) {
                     AppCompatActivity actionBarActivity = (AppCompatActivity) getActivity();
                     ActionBar actionBar = actionBarActivity.getSupportActionBar();
-                    if(position<previousPosition)
+                    if(position<previousPosition) {
+                        statusOfActionBar = true;
                         actionBar.show();
-                    else
+                    }
+                    else {
+                        statusOfActionBar = false;
                         actionBar.hide();
+                    }
                     Logger.i(TAG, "Previous Item --> "  + previousPosition + "\nCurrent Item - > " + position  );
                     previousPosition = position;
+
                 }
 
                 @Override
@@ -94,17 +123,22 @@ public class BusinessFragment extends Fragment {
             verticalViewPager.setOnScrollChangeListener(new View.OnScrollChangeListener() {
                 @Override
                 public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                            //Logger.i(TAG, "onScroll Change");
-                    /*Logger.i(TAG, "  Parent view Tag 0 -> " + container.getChildAt(0));
-                    Logger.i(TAG, "  Parent view Tag 1 -> " + container.getChildAt(1).toString() );*/
                     try {
-                        //getActivity().getActionBar().hide();
-                        /*AppCompatActivity actionBarActivity = (AppCompatActivity)getActivity();
+                    /*    AppCompatActivity actionBarActivity = (AppCompatActivity) getActivity();
                         ActionBar actionBar = actionBarActivity.getSupportActionBar();
-                        actionBar.hide();
-                        verticalViewPager.getCurrentItem();
-                        Logger.i(TAG, "Current Item --> "  + verticalViewPager.getCurrentItem());*/
-
+                        position = verticalViewPager.getCurrentItem();
+                        if(position<previousPosition){
+                            statusOfActionBar = true;
+                            actionBar.show();
+                            }
+                        else{
+                        statusOfActionBar = false;
+                            actionBar.hide();
+                            }
+                        Logger.i(TAG, "Previous Item --> "  + previousPosition + "\nCurrent Item - > " + position  + "\nPrevious Concrete - > " + previousPositionConcrete);
+                        Logger.i(TAG, "Previous Item --> "  + previousPosition + "\nCurrent Item - > " + position );// "\nPrevious Concrete - > " + previousPositionConcrete);
+                        if(previousPosition!=position)
+                            previousPosition = position;*/
                     }
                     catch (Exception e )
                     {
@@ -112,6 +146,7 @@ public class BusinessFragment extends Fragment {
                     }
 
                 }
+
 
 
             });
@@ -156,5 +191,28 @@ public class BusinessFragment extends Fragment {
             }
         });
         //this.adapter.notifyDataSetChanged();*/
+    }
+
+    private class actionBarTimer extends AsyncTask<Void, Void, Void>{
+
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                Thread.sleep(5000);
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected  void onPostExecute(Void c){
+            AppCompatActivity actionBarActivity = (AppCompatActivity) getActivity();
+            ActionBar actionBar = actionBarActivity.getSupportActionBar();
+            statusOfActionBar = false;
+            actionBar.hide();
+        }
     }
 }

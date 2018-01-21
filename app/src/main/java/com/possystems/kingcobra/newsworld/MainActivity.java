@@ -22,18 +22,30 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.gson.Gson;
 import com.onesignal.OneSignal;
 import com.possystems.kingcobra.newsworld.DataModel.DataModel;
 import com.possystems.kingcobra.newsworld.HTTP_Requests.CustomVolley;
+import com.possystems.kingcobra.newsworld.POJO.News;
 import com.possystems.kingcobra.newsworld.database.AndroidDatabaseManager;
+import com.possystems.kingcobra.newsworld.database.DataAccessLayer;
 import com.possystems.kingcobra.newsworld.database.GDatabaseHelper;
 
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,12 +68,26 @@ public class MainActivity extends AppCompatActivity implements  ActionBar.TabLis
     String TAG = "MainActivity";
     ListView list;
     List<String > viewedTabs;
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = getApplicationContext();
+        MobileAds.initialize(this, NewsApiConstants.NEWS_APP_ID_AD_MOB);
+
+        AdView adView = new AdView(this);
+        adView.setAdSize(AdSize.BANNER);
+        //adView.setAdUnitId("ca-app-pub-3940256099942544/6300978111");
+        adView.setAdUnitId(NewsApiConstants.NEWS_APP_ID_AD_MOB_ORIGINAL);
+// TODO: Add adView to your view hierarchy.
+
+        mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
+
 //OneSignal Init Start
         OneSignal.startInit(this)
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
@@ -85,11 +111,11 @@ public class MainActivity extends AppCompatActivity implements  ActionBar.TabLis
         toolbar.setBackgroundColor(Color.TRANSPARENT);
 
         setSupportActionBar(toolbar);*/
-        getSupportActionBar().setTitle("NewsWorld");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        /*getSupportActionBar().setTitle("NewsWorld");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);*/
 
         // Status bar :: Transparent
-        Window window = this.getWindow();
+        //Window window = this.getWindow();
 
        /* if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
         {
@@ -149,7 +175,8 @@ public class MainActivity extends AppCompatActivity implements  ActionBar.TabLis
                             Log.i(TAG, "1. Viewed Tabs " + viewedTabs.toString() );
                             if(!viewedTabs.contains(tab.getText())) {
                                 Log.i(TAG, tab.getText() + " hasn't been viewed so fetching for it now");
-;                                makeVolleyRequest(queries);
+                                //makeVolleyRequest(queries);
+                                makeHTTPConnReq( queries);
                                 viewedTabs.add(tab.getText().toString());
                             }
 
@@ -188,6 +215,62 @@ public class MainActivity extends AppCompatActivity implements  ActionBar.TabLis
                 super.onPostExecute(aVoid);
             }
         }.execute();
+    }
+
+    private void makeHTTPConnReq(String queries) {
+        String url = NewsApiConstants.NEWS_API_DEFAULT_END_POINT + queries + NewsApiConstants.NEWS_API_KEY;
+        Log.i(TAG, "Queries - > " + queries);
+        try {
+            new GetJSON(url, 30000, queries).execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+    public String getJSON(String url, int timeout) {
+        HttpURLConnection c = null;
+        try {
+            URL u = new URL(url);
+            c = (HttpURLConnection) u.openConnection();
+            c.setRequestMethod("GET");
+            c.setRequestProperty("Content-length", "0");
+            c.setUseCaches(false);
+            c.setAllowUserInteraction(false);
+            c.setConnectTimeout(timeout);
+            c.setReadTimeout(timeout);
+            c.connect();
+            int status = c.getResponseCode();
+
+            switch (status) {
+                case 200:
+                case 201:
+                    BufferedReader br = new BufferedReader(new InputStreamReader(c.getInputStream()));
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        sb.append(line+"\n");
+                    }
+                    br.close();
+                    return sb.toString();
+            }
+
+        } catch (MalformedURLException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (c != null) {
+                try {
+                    c.disconnect();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        return null;
     }
 
     private void makeVolleyRequest(String queries) {
@@ -425,4 +508,106 @@ public boolean checkPermission(){
     public void onTabReselected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction ft) {
 
     }
+
+    private class GetJSON extends  AsyncTask<Void, Void, JSONObject>{//Params, Progress, Result
+        String url;
+        int timeout;
+        String queries;
+        public GetJSON(String url, int timeout, String queries) {
+            this.url = url;
+            this.timeout = timeout;
+            this.queries = queries;
+        }
+
+        @Override
+        protected JSONObject doInBackground(Void... params) {
+            try {
+                Log.i(TAG, "Accessing NEWS API now at - > " + url);
+                return new JSONObject(getJSON(url, timeout));
+            } catch (Exception e) {
+                e.printStackTrace();
+                return  null;
+            }
+
+        }
+        @Override
+        protected void onPostExecute(JSONObject jsonObject){
+            super.onPostExecute(jsonObject);
+            writeToDB(jsonObject, queries);
+        }
+    }
+
+    private void writeToDB(JSONObject jsonObject, String queries) {
+
+        //Extract articles array from gsonArticles
+        Gson gsonObject = new Gson();
+        try {
+            Logger.i(TAG, "JSon string being parsed - > " + jsonObject.toString());
+            News news = gsonObject.fromJson(jsonObject.toString(), News.class);
+            /*Logger.i(TAG, "News - > \n" +
+                    "\nStatus - > " + news.getStatus() +
+                    "\nTotal Results - > " + news.getTotalResults() +
+                    "\nAuthor - > " + news.articles.get(0).getAuthor() +
+                    "\nTitle - > " + news.articles.get(0).getTitle() +
+                    "\nDesc - > " + news.articles.get(0).getDescription() +
+                    "\nPub At - > " + news.articles.get(0).getPublishedAt() +
+                    "\nURL - > " + news.articles.get(0).getUrl() +
+                    "\nURL TO IMAGE - > " + news.articles.get(0).getUrlToImage());*/
+            new WriteDataToDB(news, queries).execute();
+        }catch (Exception e){e.printStackTrace();}
+
+
+    }
+    private class WriteDataToDB extends  AsyncTask<Void, Void, Boolean>{//Params, Progress, Result
+        News news;
+        String queries;
+
+        public WriteDataToDB(News news, String queries) {
+            this.news = news;
+            this.queries = queries;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            Boolean dataWriteToDBsuccess = false;
+            DataAccessLayer DAL = new DataAccessLayer(context);
+            try {dataWriteToDBsuccess = DAL.writeFirstGsonResponseDataToDB(news, queries);} catch (Exception e) {e.printStackTrace();}
+            return dataWriteToDBsuccess;
+        }
+        @Override
+        protected void onPostExecute(Boolean writeToDBSuccess){
+            super.onPostExecute(writeToDBSuccess);
+
+            if(writeToDBSuccess) {
+                Log.i(TAG, "Writing data to db success, going to update UI now");
+                new UpdateUIAsync(queries).execute();
+            }
+            else Log.i(TAG, " Data write to DB failed");
+
+        }
+    }
+    private class UpdateUIAsync extends  AsyncTask<Void, Void, Void>{//Params, Progress, Result
+        String queries;
+
+        public UpdateUIAsync(String queries) {
+            this.queries = queries;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Boolean dataWriteToDBsuccess = false;
+            DataAccessLayer DAL = new DataAccessLayer(context);
+            try {
+                NewsApiJsonParser newsApiJsonParser = new NewsApiJsonParser();
+                newsApiJsonParser.updateUI(context, queries);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+
+        }
+
+    }
+
 }

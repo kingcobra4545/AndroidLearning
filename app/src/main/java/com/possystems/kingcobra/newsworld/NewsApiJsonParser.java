@@ -3,6 +3,7 @@ package com.possystems.kingcobra.newsworld;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.ListView;
 
 import com.possystems.kingcobra.newsworld.DataModel.DataModel;
@@ -65,14 +66,14 @@ public class NewsApiJsonParser {
             if(map.get("status").equals("ok")){
                 Logger.i(TAG, "Status:OK");
                 articlesArray= new JSONArray( map.get("articles"));
-                Logger.i(TAG, " articles -> "  + articlesArray.get(0));
+                Log.i(TAG, " articles -> "  + articlesArray.get(0));
 
                 //Write into local db
                 DataAccessLayer DAL = new DataAccessLayer(context);
                 DAL.writeFirstJsonResponseDataToDB(articlesArray, queries);
 
                 //Update UI with obtained data
-                updateUI(context, list, queries);
+                updateUI(context, queries);
 
             }
 
@@ -108,7 +109,9 @@ public class NewsApiJsonParser {
 
         HashMap<String, String> map = new HashMap<>();
         ArrayList<String> arrayOfNames = new ArrayList<>();
+
         for(int i = 0 ; i<responseJSONOBJECT[0].length();i++) arrayOfNames.add((String) responseJSONOBJECT[0].names().get(i)) ;
+        Log.i(TAG, "Names - > " + arrayOfNames.toString());
 
         for(int p=0 ; p<responseJSONOBJECT[0].length();p++)
             for (String names: arrayOfNames) map.put(names, (String) responseJSONOBJECT[0].getString(names));
@@ -171,7 +174,7 @@ public class NewsApiJsonParser {
     }*/
     private TabsPagerAdapter mAdapter;
 
-    public void updateUI(final Context context2, final ListView list, final String queries) {
+    public void updateUI(final Context context2, final String queries) {
 
 
         Handler mainHandler = new Handler(context2.getMainLooper());
@@ -250,15 +253,15 @@ public class NewsApiJsonParser {
     }
 
     public void noResponseHandler(Context context, ListView list, String queries) {
-        updateUI(context, list, queries);
+        updateUI(context, queries);
 
     }
 
     /*public void firstResponseGsonParser(Context context, ListView list, String queries) {
 
-        Gson gson = new Gson();
+        Gson gsonArticles = new Gson();
         List<>
-        gson.fromJson(response, type);
+        gsonArticles.fromJson(response, type);
 
 
     }*/
